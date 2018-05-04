@@ -1,15 +1,27 @@
 const router = require('express').Router()
-const sequelize = require('sequelize')
 const User = require('./models').User
+const passport = require('passport')
+const jwt = require('jsonwebtoken')
 
 router.get('/', (req, res) => {
   res.status(200).json({ message: 'connected' })
 })
 
-router.get('/login', (req, res) => {
-  console.log('login')
-  res.status(200).json({ message: 'login!'})
+router.post('/login', function (req, res, next) {
+  passport.authenticate('local', {session: false}, (err, user, info) => {
+    if (err) return res.status(400).json({error: err})
+    if (!user) return res.status(400).json({message: 'There is no user'})
+    req.login(user, {session: false}, (err) => {
+        if (err) {
+            res.send(err)
+        }
+        // generate a signed son web token with the contents of user object and return it in the response
+        const token = jwt.sign(user, process.env.SECRET);
+        return res.json({user, token});
+    });
+  })(req, res)
 })
+
 
 router.get('/logout', (req, res) => {
   console.log('logout')
@@ -21,8 +33,10 @@ router.get('/auth', (req, res) => {
   res.status(200).json({ message: 'auth!'})
 })
 
-router.get('/user', (req, res) => {
-  User.findAll()
+router.get('/user', passport.authenticate('jwt', {session: false}), (req, res) => {
+  User.findAll({
+    attributes: { exclude: ['password']}
+  })
     .then(users => {
       res.status(200).json(users)
     })
