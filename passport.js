@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy
 const passportJWT = require("passport-jwt")
 const JWTStrategy   = passportJWT.Strategy
 const ExtractJWT = passportJWT.ExtractJwt
+const bcrypt = require('bcrypt')
 
 const User = require('./models').User
 
@@ -13,33 +14,35 @@ passport.use(new LocalStrategy({
       session: false
     }, 
     function (req, email, password, cb) {
-        //this one is typically a DB call. Assume that the returned user object is pre-formatted and ready for storing in JWT
         User
           .findOne({ where: {email: email} })
           .then(user => {
-            if (!user) {
+            if(!user) return cb(null, false, {message: 'User doesn\' exist'})
+            bcrypt.compare(password, user.password, function(err, res) {
+              if(err) return err
+              if (!res) {
                 return cb(null, false, {message: 'Incorrect email or password.'});
-            }
-            return cb(null, user.dataValues, {message: 'Logged In Successfully'});
+              }
+              delete user.dataValues.password
+              return cb(null, user.dataValues, {message: 'Logged In Successfully'});
+            });
           })
           .catch(err => cb(err));
     }
 ))
 
 passport.use(new JWTStrategy({
-  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-  secretOrKey   : process.env.SECRET
-},
-function (jwtPayload, cb) {
-  console.log('payload now')
-  console.log(jwtPayload)
-  //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
-  return User.findById(jwtPayload.id)
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    secretOrKey   : process.env.SECRET
+  },
+  function (jwtPayload, cb) {
+    return User.findById(jwtPayload.id)
       .then(user => {
-          return cb(null, user);
+        delete user.password
+        return cb(null, user);
       })
       .catch(err => {
-          return cb(err);
+        return cb(err);
       });
-}
+  }
 ))
