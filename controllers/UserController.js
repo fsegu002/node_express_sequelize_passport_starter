@@ -55,9 +55,9 @@ module.exports = {
         }
       )
       .then(user => {
-        if(!user) return res.status(500).json('User does not exist')
+        if(!user) return res.status(404).json('User does not exist')
         user.destroy()
-        return res.status(200).json('User deleted')
+        return res.status(204)
       })
       .catch(err => {
         console.log(err)
