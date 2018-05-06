@@ -2,6 +2,11 @@ const User = require('../models').User
 const passport = require('passport')
 
 module.exports = {
+  /**
+   * /user/:id
+   * Show user specified in URL
+   * Authentication required
+   */
   show: (req, res) => {
     const userId = req.params.id
     User
@@ -13,6 +18,12 @@ module.exports = {
       )
       .then(user => res.status(200).json(user))
   },
+  /**
+   * /user/:id
+   * Edit user specified in URL
+   * User can only edit himself
+   * Authentication required
+   */
   edit: (req, res) => {
     let userId = req.params.id
     let data = req.body
@@ -33,18 +44,28 @@ module.exports = {
         })
         .catch(err => res.status(400).json(err))
     })(req, res)
-    
   },
+  /**
+   * /user
+   * List all users
+   * Authentication required
+   */
   index: (req, res) => {
     User
       .findAll({
-        attributes: { exclude: ['password']}
+        attributes: { exclude: ['password']},
+        order: [['createdAt', 'ASC']]
       })
       .then(users => {
         res.status(200).json(users)
       })
       .catch( err => res.status(400).json(err) )
   },
+  /**
+   * /user/:id
+   * Delete user specified in URL
+   * Authentication required
+   */
   delete: (req, res) => {
     let userId = req.params.id
     User

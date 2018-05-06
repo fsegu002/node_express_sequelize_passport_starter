@@ -4,6 +4,11 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
 module.exports = {
+  /**
+   * /signup
+   * Signup for a new user account
+   * Authentication NOT required
+   */
   signup: (req, res, next) => {
     const saltRounds = 10
     const {email, password} = req.body
@@ -18,6 +23,11 @@ module.exports = {
           .catch(err => res.status(400).json({err}))
       });
   },
+  /**
+   * /signin
+   * Signin into user account
+   * Authentication NOT required
+   */
   signin: (req, res, next) => {
     passport.authenticate('local', {session: false}, (err, user, info) => {
       if (err) return res.status(400).json({error: err})
