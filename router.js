@@ -8,6 +8,7 @@ const Signin = require('./controllers/AuthController').signin
 const EditUser = require('./controllers/UserController').edit
 const IndexUser = require('./controllers/UserController').index
 const ShowUser = require('./controllers/UserController').show
+const DeleteUser = require('./controllers/UserController').delete
 
 const noSession = { session: false }
 
@@ -22,6 +23,8 @@ router.get('/user', passport.authenticate('jwt', noSession), IndexUser)
 router.get('/user/:id', passport.authenticate('jwt', noSession), ShowUser)
 
 router.put('/user/:id', passport.authenticate('jwt', noSession), EditUser)
+
+router.delete('/user/:id', passport.authenticate('jwt', noSession), DeleteUser)
 
 
 
