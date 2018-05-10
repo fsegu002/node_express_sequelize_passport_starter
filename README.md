@@ -1,4 +1,4 @@
-# Add a config.json file to configure DB
+## Add a config.json file to configure DB
 ```json
 {
   "development": {
@@ -25,6 +25,6 @@
 }
 ```
 
-# Add a .env file with a SECRET key
+## Add an .env file with a SECRET key
 
-# Execute migration command 'db:migrate' before starting the server
+## Execute migration command 'db:migrate' before starting the server
