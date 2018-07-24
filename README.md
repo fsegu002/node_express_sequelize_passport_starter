@@ -27,4 +27,4 @@
 
 ## Add an .env file with a SECRET key
 
-## Execute migration command 'db:migrate' before starting the server
+## Execute migration command 'node_modules/.bin/sequelize db:migrate' before starting the server
