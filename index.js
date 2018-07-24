@@ -7,14 +7,14 @@ const bodyParser = require('body-parser')
 const passport = require('passport')
 require('./passport')
 
-const port = process.env.PORT || 3000
+module.exports = function app() {
+    const expressApp = express()
+    expressApp.use(bodyParser.json())
+    expressApp.use(bodyParser.urlencoded({ extended: true }))
+    expressApp.use(helmet())
+    expressApp.use(morgan('dev'))
+    
+    expressApp.use('/', routes)
 
-const app = express()
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(helmet())
-app.use(morgan('dev'))
-
-app.use('/', routes)
-
-app.listen(port, () => console.log(`Listening on port ${port}`))
+    return expressApp
+}
