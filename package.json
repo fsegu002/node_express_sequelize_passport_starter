@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./bin/www",
-    "start-test": "node ./bin/www",
-    "test": "mocha --timeout 15000",
+    "test": "NODE_ENV=test mocha --timeout 15000",
     "test:watch": "npm test -- --watch"
   },
   "author": "franco segura",
