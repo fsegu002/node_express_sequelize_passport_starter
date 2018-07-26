@@ -1,8 +1,9 @@
 let http = require('http')
 let app = require('../index')
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'test') ? 3001 : 3000
 
 const api = app()
 
-module.exports = http.createServer(api).listen(3000, () => {
-  console.log('starting server on port 3000')
+module.exports = http.createServer(api).listen(PORT, () => {
+  console.log('starting server on port ' + PORT)
 })

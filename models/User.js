@@ -16,14 +16,9 @@ module.exports = (sequelize, DataTypes) => {
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
     photoUrl: DataTypes.STRING
-  }, {
-    tableName       : 'scanner',
-    classMethods:{
-        isValid : function(user) {
-            return this.build(user).validate() ? true : false ;
-        }
-    }
-  });
+  }, 
+  {}
+)
   // User.associate = function(models) {
   //   // associations can be defined here
   // };

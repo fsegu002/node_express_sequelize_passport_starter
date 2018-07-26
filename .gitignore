@@ -3,3 +3,10 @@ node_modules
 config.json
 yarn-error.log
 package-lock.json
+
+# ignore VSCode configuration
+.vscode/
+
+# ignore test coverages
+.nyc_output/
+coverage/

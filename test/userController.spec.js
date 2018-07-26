@@ -10,7 +10,7 @@ let seed = require('./seed')
 
 chai.use(chaiHttp)
 
-describe('API Routes', () => {
+describe('userController API', () => {
   let authToken = ''
 
   // start with a fresh DB 
@@ -36,8 +36,6 @@ describe('API Routes', () => {
       })
       .then((res) => {
         authToken = res.body.token
-        console.log('token is:')
-        console.log(authToken)
       })
     }).then(() => {
       done()

@@ -41,4 +41,58 @@ module.exports = {
       });
     })(req, res)
   },
+
+  /**
+   * /change-password
+   * Request to change password by confirming current password and providing a new one
+   * Authentication required
+   */
+  changePassword: (req, res, next) => {
+    let originalToken = req.get('Authorization')
+    let token = originalToken.split(' ')
+    const userFromToken = jwt.decode(token[1])
+
+    const saltRounds = 10
+    const { password, newPassword, confirmNewPassword } = req.body
+    User
+    .findById(userFromToken.id)
+    .then(user => {
+      console.log('user')
+      console.log(user.dataValues)
+      let currentPasswordMatch = false
+      bcrypt.compare(password, user.dataValues.password, function(err, res) {
+        if(err) return err
+        if(!res){
+          return false
+        }
+        currentPasswordMatch = true
+        comfirmNewPasswords()
+      })
+      if(!currentPasswordMatch) {
+        return res.status(400).json({ message: 'Wrong password'})
+      }
+
+      
+      bcrypt.hash(newPassword, saltRounds)
+      .then((hash) => {
+        console.log('update now')
+        user.update({ password: hash })
+        // delete user.dataValues.password
+        return res.status(200).json(user)
+      })
+      .catch(err => res.status(400).json(err))
+
+    })
+    .catch(err => res.status(400).json(err))
+
+    let endWithError = () => {
+      console.log('end with errors')
+      return res.status(400).json({ message: 'Wrong password'})
+    }
+
+    let comfirmNewPasswords = () => {
+      if(newPassword !== confirmNewPassword) return res.status(400).json({ message: 'Password confirmation doesn\' match'})
+    }
+
+  }
 }

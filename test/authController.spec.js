@@ -10,13 +10,32 @@ let seed = require('./seed')
 
 chai.use(chaiHttp)
 
-describe('API Routes', () => {
-
+describe('authController API', () => {
+  let authToken = ''
   // start with a fresh DB 
   before(done => {
     models.sequelize.sync({ force: true })
     .then(() => {
       return seed(models)
+    }).then(() => {
+      return chai.request(app)
+      .post('/signup')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({
+        email: 'jsmith1@company.com',
+        password: 'pass1234'
+      })
+    }).then(() => {
+      return chai.request(app)
+      .post('/signin')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({
+        email: 'jsmith1@company.com',
+        password: 'pass1234'
+      })
+      .then((res) => {   
+        authToken = res.body.token
+      })
     }).then(() => {
       done()
     })
@@ -105,4 +124,51 @@ describe('API Routes', () => {
       })
     })
   })  
+
+  describe('POST /change-password', () => {
+    it('should return 200 if password is correct and new password matches confirmation', () => {
+      return chai.request(app)
+      .post('/change-password')
+      .set('Authorization', 'Bearer ' + authToken)
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({
+        password: 'pass1234',
+        newPassword: 'newPassword',
+        confirmNewPassword: 'newPassword'
+      })
+      .then((res) => {
+        expect(res.status).to.equal(200)
+      })
+    })
+    it('should return 400 if password is incorrect', () => {
+      return chai.request(app)
+      .post('/change-password')
+      .set('Authorization', 'Bearer ' + authToken)
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({
+        password: 'incorrectPassword',
+        newPassword: 'newPassword',
+        confirmNewPassword: 'newPassword'
+      })
+      .then((res) => {
+        expect(res.status).to.equal(400)
+        expect(res.body.message).to.equal('Wrong password')
+      })
+    })
+    it('should return 400 if new password doesnt match confirmation', () => {
+      return chai.request(app)
+      .post('/change-password')
+      .set('Authorization', 'Bearer ' + authToken)
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({
+        password: 'pass1234',
+        newPassword: 'newPassword',
+        confirmNewPassword: 'newPasswordWrong'
+      })
+      .then((res) => {
+        expect(res.status).to.equal(400)
+        // expect(res.body.message).to.equal('Password confirmation doesn\' match')
+      })
+    })
+  })
 })

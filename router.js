@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken')
 
 const Signup = require('./controllers/AuthController').signup
 const Signin = require('./controllers/AuthController').signin
+const ChangePassword = require('./controllers/AuthController').changePassword
+
 const EditUser = require('./controllers/UserController').edit
 const IndexUser = require('./controllers/UserController').index
 const ShowUser = require('./controllers/UserController').show
@@ -15,6 +17,8 @@ const noSession = { session: false }
 router.post('/signup', Signup)
 
 router.post('/signin', Signin)
+
+router.post('/change-password', passport.authenticate('jwt', noSession), ChangePassword)
 
 // TODO implement logout
 
