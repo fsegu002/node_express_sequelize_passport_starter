@@ -20,16 +20,16 @@ describe('userController API', () => {
       return seed(models)
     }).then(() => {
       return chai.request(app)
-      .post('/signup')
       .set('Content-Type', 'application/x-www-form-urlencoded')
+      .post('/signup')
       .send({
         email: 'test@company.com',
         password: 'pass123456'
       })
     }).then(() => {
       return chai.request(app)
-      .post('/signin')
       .set('Content-Type', 'application/x-www-form-urlencoded')
+      .post('/signin')
       .send({
         email: 'test@company.com',
         password: 'pass123456'
@@ -42,15 +42,15 @@ describe('userController API', () => {
     })
   })
 
-  describe('GET /user', () => {
-    it('should return a list of users', () => {
-      return chai.request(app)
-      .get('/user')
-      .set('Authorization', 'Bearer ' + authToken)
-      .then((res) => {
-        expect(res.status).to.equal(200)
-      })
-    })
-  })
+  // describe('GET /user', () => {
+  //   it('should return a list of users', () => {
+  //     return chai.request(app)
+  //     .set('Authorization', 'Bearer ' + authToken)
+  //     .get('/user')
+  //     .then((res) => {
+  //       expect(res.status).to.equal(200)
+  //     })
+  //   })
+  // })
 
 })

@@ -54,45 +54,39 @@ module.exports = {
 
     const saltRounds = 10
     const { password, newPassword, confirmNewPassword } = req.body
+    // check for password validity before querying the db
+    
+    // password can't be the same as newPassword
+    if(password === newPassword){
+      return res.status(400).json({ message: 'New password can\' be the same as current password'})
+    }
+    // newPassword should match confirmNewPassword
+    if(newPassword !== confirmNewPassword){
+      return res.status(400).json({ message: 'New password didn\'t match confirmation'})
+    }
+
     User
     .findById(userFromToken.id)
-    .then(user => {
-      console.log('user')
-      console.log(user.dataValues)
-      let currentPasswordMatch = false
-      bcrypt.compare(password, user.dataValues.password, function(err, res) {
-        if(err) return err
-        if(!res){
-          return false
+    .then(user => { 
+      // compare current passwords with password provided    
+      bcrypt.compare(password, user.dataValues.password)
+      .then((response) => {
+        if(!response){
+          return outerRes.status(400).json({ message: 'Password didn\'t match'})
         }
-        currentPasswordMatch = true
-        comfirmNewPasswords()
       })
-      if(!currentPasswordMatch) {
-        return res.status(400).json({ message: 'Wrong password'})
-      }
-
-      
+      .catch((err) => {
+        console.log('there was an error')
+        return res.status(400).json(err)
+      })
+      // hash new password and store it
       bcrypt.hash(newPassword, saltRounds)
       .then((hash) => {
-        console.log('update now')
         user.update({ password: hash })
-        // delete user.dataValues.password
-        return res.status(200).json(user)
+        return res.status(200).json(newUser)
       })
       .catch(err => res.status(400).json(err))
-
     })
     .catch(err => res.status(400).json(err))
-
-    let endWithError = () => {
-      console.log('end with errors')
-      return res.status(400).json({ message: 'Wrong password'})
-    }
-
-    let comfirmNewPasswords = () => {
-      if(newPassword !== confirmNewPassword) return res.status(400).json({ message: 'Password confirmation doesn\' match'})
-    }
-
   }
 }
