@@ -152,7 +152,7 @@ describe('authController API', () => {
       })
       .then((res) => {
         expect(res.status).to.equal(400)
-        expect(res.body.message).to.equal('Wrong password')
+        expect(res.body.message).to.equal('Password didn\'t match')
       })
     })
     it('should return 400 if new password doesnt match confirmation', () => {

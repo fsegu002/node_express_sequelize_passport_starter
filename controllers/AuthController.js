@@ -72,18 +72,21 @@ module.exports = {
       bcrypt.compare(password, user.dataValues.password)
       .then((response) => {
         if(!response){
-          return outerRes.status(400).json({ message: 'Password didn\'t match'})
-        }
+          return res.status(400).json({ message: 'Password didn\'t match'})
+        }        
       })
       .catch((err) => {
         console.log('there was an error')
         return res.status(400).json(err)
       })
+      return user      
+    })
+    .then(user => {
       // hash new password and store it
       bcrypt.hash(newPassword, saltRounds)
       .then((hash) => {
         user.update({ password: hash })
-        return res.status(200).json(newUser)
+        return res.status(200).json(user)
       })
       .catch(err => res.status(400).json(err))
     })
