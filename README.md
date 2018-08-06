@@ -31,13 +31,8 @@
 Sequelize reference: [http://docs.sequelizejs.com/manual/tutorial/migrations.html](http://docs.sequelizejs.com/manual/tutorial/migrations.html)
 
 #### Running Test
-Open a duplicate window to run the app in test mode:
+To run the tests using Mocha and Chai run the following:
 
 ```
-SET NODE_ENV=test
-npm run start-test
-```
-And in your original window run:
-```
-npm run test:watch
+npm run test
 ```

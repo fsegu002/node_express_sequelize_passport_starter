@@ -14,22 +14,20 @@ describe('userController API', () => {
   let authToken = ''
 
   // start with a fresh DB 
-  before(done => {
-    models.sequelize.sync({ force: true })
+  before(() => {
+    return models.sequelize.sync({ force: true })
     .then(() => {
-      return seed(models)
-    }).then(() => {
       return chai.request(app)
-      .set('Content-Type', 'application/x-www-form-urlencoded')
       .post('/signup')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
       .send({
         email: 'test@company.com',
         password: 'pass123456'
       })
     }).then(() => {
       return chai.request(app)
-      .set('Content-Type', 'application/x-www-form-urlencoded')
       .post('/signin')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
       .send({
         email: 'test@company.com',
         password: 'pass123456'
@@ -37,20 +35,57 @@ describe('userController API', () => {
       .then((res) => {
         authToken = res.body.token
       })
-    }).then(() => {
-      done()
     })
   })
 
-  // describe('GET /user', () => {
-  //   it('should return a list of users', () => {
-  //     return chai.request(app)
-  //     .set('Authorization', 'Bearer ' + authToken)
-  //     .get('/user')
-  //     .then((res) => {
-  //       expect(res.status).to.equal(200)
-  //     })
-  //   })
-  // })
+  describe('GET /user', () => {
+    it('should return a list of users', () => {
+      return chai.request(app)
+      .get('/user')
+      .set('Authorization', 'Bearer ' + authToken)
+      .then((res) => {
+        expect(res.status).to.equal(200)
+        expect(res.body).to.have.lengthOf(1)
+      })
+    })
+
+    it('should return user with the ID of 1 from seed', () => {
+      return chai.request(app)
+      .get('/user/1')
+      .set('Authorization', 'Bearer ' + authToken)
+      .then((res) => {
+        expect(res.status).to.equal(200)
+        expect(res.body.email).to.equal('test@company.com')
+      })
+    })
+
+    it('should edit users First name', () => {
+      return chai.request(app)
+      .put('/user/1')
+      .set({
+        'Authorization': 'Bearer ' + authToken,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+      .send({
+        firstName: 'Jake'
+      })
+      .then((res) => {
+        expect(res.status).to.equal(200)
+        expect(res.body.firstName).to.equal('Jake')
+      })
+    })
+
+    it('should delete user', () => {
+      return chai.request(app)
+      .delete('/user/1')
+      .set({
+        'Authorization': 'Bearer ' + authToken,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+      .then((res) => {
+        expect(res.status).to.equal(200)
+      })
+    })
+  })
 
 })

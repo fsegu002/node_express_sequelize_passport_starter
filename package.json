@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "cross-env NODE_ENV=test nyc mocha test/**/*.js",
+    "test": "cross-env NODE_ENV=test nyc mocha test/index.js",
+    "testFile": "cross-env NODE_ENV=test nyc mocha -- --watch",
     "test:watch": "npm test -- --watch"
   },
   "author": "franco segura",
