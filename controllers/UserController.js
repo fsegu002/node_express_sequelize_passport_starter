@@ -57,7 +57,7 @@ module.exports = {
         order: [['createdAt', 'ASC']]
       })
       .then(users => {
-        res.status(200).json(users)
+        return res.status(200).json(users)
       })
       .catch( err => res.status(400).json(err) )
   },
@@ -68,6 +68,7 @@ module.exports = {
    */
   delete: (req, res) => {
     let userId = req.params.id
+    console.log('userID: ', userId)
     User
       .findById(
         userId,
@@ -76,9 +77,11 @@ module.exports = {
         }
       )
       .then(user => {
+        console.log('user', user.dataValues)
+        let deletedUser = Object.assign({}, user.dataValues)
         if(!user) return res.status(404).json({message: 'User does not exist'})
         user.destroy()
-        res.status(204)
+        return res.status(204).end()
       })
       .catch(err => {
         console.log(err)

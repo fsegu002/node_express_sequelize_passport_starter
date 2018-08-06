@@ -58,7 +58,9 @@ describe('userController API', () => {
         expect(res.body.email).to.equal('test@company.com')
       })
     })
+  })
 
+  describe('PUT /user', () => {
     it('should edit users First name', () => {
       return chai.request(app)
       .put('/user/1')
@@ -74,7 +76,9 @@ describe('userController API', () => {
         expect(res.body.firstName).to.equal('Jake')
       })
     })
+  })
 
+  describe('DELETE /user', () => {
     it('should delete user', () => {
       return chai.request(app)
       .delete('/user/1')
@@ -83,7 +87,7 @@ describe('userController API', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       })
       .then((res) => {
-        expect(res.status).to.equal(200)
+        expect(res.status).to.equal(204)
       })
     })
   })
