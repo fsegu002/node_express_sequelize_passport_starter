@@ -12,6 +12,8 @@ const IndexUser = require('./controllers/UserController').index
 const ShowUser = require('./controllers/UserController').show
 const DeleteUser = require('./controllers/UserController').delete
 
+const SendEmail = require('./controllers/EmailController').sendEmail
+
 const noSession = { session: false }
 
 router.post('/signup', Signup)
@@ -30,6 +32,7 @@ router.put('/user/:id', passport.authenticate('jwt', noSession), EditUser)
 
 router.delete('/user/:id', passport.authenticate('jwt', noSession), DeleteUser)
 
+router.post('/send-email', SendEmail)
 
 
 module.exports = router

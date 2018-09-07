@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const routes = require('./router')
+const routerV1 = require('./router-v1')
 const morgan = require('morgan')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
@@ -16,7 +16,10 @@ module.exports = function app() {
     expressApp.use(morgan('dev'))
     expressApp.use(cors())
 
-    expressApp.use('/', routes)
+    /**
+     * Define API versions
+     */
+    expressApp.use('/api/v1', routerV1)
 
     return expressApp
 }
