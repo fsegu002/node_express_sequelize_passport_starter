@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
 const passport = require('passport')
+const cors = require('cors')
 require('./passport')
 
 module.exports = function app() {
@@ -13,7 +14,8 @@ module.exports = function app() {
     expressApp.use(bodyParser.urlencoded({ extended: true }))
     expressApp.use(helmet())
     expressApp.use(morgan('dev'))
-    
+    expressApp.use(cors())
+
     expressApp.use('/', routes)
 
     return expressApp

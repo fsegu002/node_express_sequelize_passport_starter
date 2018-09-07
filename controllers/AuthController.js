@@ -11,11 +11,11 @@ module.exports = {
    */
   signup: (req, res, next) => {
     const saltRounds = 10
-    const {email, password} = req.body
-    bcrypt.hash(password, saltRounds)
+    bcrypt.hash(req.body.password, saltRounds)
       .then(function(hash) {
+        console.log('hash', hash)
         User
-          .create({ email: email, password: hash })
+          .create({ ...req.body, password: hash })
           .then(user => {
             delete user.dataValues.password
             return res.status(201).json(user.dataValues)
@@ -30,8 +30,8 @@ module.exports = {
    */
   signin: (req, res, next) => {
     passport.authenticate('local', {session: false}, (err, user, info) => {
-      if (err) return res.status(400).json({error: err})
-      if (!user) return res.status(400).json({error: info})
+      if (err) return res.status(400).json({errorr: err})
+      if (!user) return res.status(400).json(info)
       req.login(user, {session: false}, (err) => {
           if (err) {
               res.send(err)
